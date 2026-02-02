@@ -1,0 +1,24 @@
+---
+- name: Share file and read every minute
+  hosts: new
+  become: yes
+
+  tasks:
+    - name: Copy txt file to Ubuntu
+      copy:
+        src: /home/ezhil/ansible_notepad.txt
+        dest: /home/ezhil/openvpn-ca
+
+    - name: Create script to read the file
+      copy:
+        dest: /usr/local/bin/open_file.sh
+        mode: '0755'
+        content: |
+          #!/bin/bash
+          cat /tmp/sample.txt >> /tmp/sample_read.log
+
+    - name: Run script every 1 minute
+      cron:
+        name: "Read txt file every minute"
+        minute: "*"
+        job: "/usr/local/bin/open_file.sh"
